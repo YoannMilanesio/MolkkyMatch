@@ -1,0 +1,18 @@
+{
+  "rules": [
+    {
+      "title": "But du jeu",
+      "subtitle": null,
+      "paragraphs": [
+        "Le principe du jeu est simple. A l'aide d'un lanceur appelé Mölkky, il faut faire tomber des quilles en bois numérotées qui, lorsque renversées, rapportent des points. Le premier joueur/équipe arrivant à obtenir le score exact de 50 points remporte la partie."
+      ]
+    },
+    {
+      "title": "Équipement",
+      "subtitle": null,
+      "paragraphs": [
+        "Le Mölkky se joue avec des quilles en bois de bouleau portant un numéro allant de 1 à 12. Elles sont d'une hauteur de 15cm, plates à la base et biseautées (45°) au sommet. Leur diamètre est 5,9cm. La quille de lancement a une longueur de 22,5cm et un diamètre de 5,9cm."
+      ]
+    }
+  ]
+}

@@ -13,7 +13,20 @@ class MolkkyMatchApp extends StatelessWidget {
         primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.latoTextTheme(
-          Theme.of(context).textTheme,
+          Theme.of(context).textTheme.copyWith(
+            displayLarge: Theme.of(context).textTheme.displayLarge!.copyWith(
+              fontSize: 24,
+              color: AppColors.whiteColor
+            ),
+            titleMedium: Theme.of(context).textTheme.titleMedium!.copyWith(
+              fontSize: 20,
+              color: AppColors.whiteColor
+            ),
+            bodyMedium: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontSize: 16,
+              color: AppColors.whiteColor
+            ),
+          ),
         ),
       ),
       debugShowCheckedModeBanner: false,

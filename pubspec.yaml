@@ -26,6 +26,7 @@ flutter:
 
   assets:
     - assets/img/
+    - lib/screens/rules/doc/rules.json
 
   fonts:
     - family: RailsBroken
