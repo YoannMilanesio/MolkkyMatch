@@ -72,13 +72,17 @@ class _RulesPageState extends State<RulesPage> {
         final subtitles = item['subtitles'];
         final paragraphs = item['paragraphs'];
         index += 1;
-        final titleWidget = Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            '$index) $title',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+
+        final titleWidget = Visibility(
+          visible: title != null,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              '$index) $title',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         );
