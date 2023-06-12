@@ -37,7 +37,10 @@ export 'package:flutter_blurhash/flutter_blurhash.dart'; // Blur Hash
     export 'package:molkky_match/utils/theme/app_styles.dart'; // Liste des styles textuels, boutons, ...
     export 'package:molkky_match/utils/theme/app_colors.dart'; // Liste des couleurs utilisées
     // - Tools
-    export 'package:molkky_match/utils/tools/fade_page_route.dart'; // Transition fade entres pages
     export 'package:molkky_match/utils/tools/app_scaffold.dart'; // Scaffold de l'appli
+    export 'package:molkky_match/utils/tools/appbar.dart'; // Scaffold de l'appli
+    export 'package:molkky_match/utils/tools/drawer.dart'; // Scaffold de l'appli
+    export 'package:molkky_match/utils/tools/fade_page_route.dart'; // Transition fade entres pages
+    export 'package:molkky_match/utils/tools/home_scaffold.dart'; // Scaffold de l'appli
     // - Widgets
     export 'package:molkky_match/utils/widgets/hex_color.dart'; // Convert HexCode to Flutter Color

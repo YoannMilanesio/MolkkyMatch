@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
     Size size = MediaQuery.of(context).size;
 
-    return AppScaffold(
+    return HomeScaffold(
       scaffoldKey: scaffoldKey,
       hauteur: size.height * 0.25,
       body: Column(
