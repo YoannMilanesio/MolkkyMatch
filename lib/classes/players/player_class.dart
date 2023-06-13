@@ -1,5 +1,5 @@
 class Player {
-  int id;
+  int? id;
   String name;
   DateTime createdAt;
   DateTime updatedAt;

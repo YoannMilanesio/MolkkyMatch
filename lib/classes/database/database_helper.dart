@@ -23,13 +23,27 @@ class DatabaseHelper {
     );
   }
 
-  static Future<int> createPlayer(Player player) async {
+  static Future<bool> createPlayer(Player player) async {
     final db = await _getDatabase();
 
+    final existingPlayers = await db.query(
+      'players',
+      where: 'name = ?',
+      whereArgs: [player.name],
+      limit: 1,
+    );
+
+    if (existingPlayers.isNotEmpty) {
+      return false; // Le nom du joueur est déjà pris
+    }
+
     final data = player.toMap();
-    final id = await db.insert('players', data,
-        conflictAlgorithm: sql.ConflictAlgorithm.replace);
-    return id;
+    final id = await db.insert(
+      'players',
+      data,
+      conflictAlgorithm: sql.ConflictAlgorithm.replace,
+    );
+    return id > 0; // Le joueur a été créé avec succès
   }
 
   static Future<List<Player>> getPlayers() async {

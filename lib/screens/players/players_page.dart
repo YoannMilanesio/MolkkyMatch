@@ -65,13 +65,26 @@ class _PlayersPageState extends State<PlayersPage> {
   }
 
   Future<void> _createPlayer(String name) async {
-    final player = Player(
-      id: 0,
-      name: name,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    await DatabaseHelper.createPlayer(player);
+    final existingPlayers = await DatabaseHelper.getPlayers();
+    final isNameTaken = existingPlayers.any((player) => player.name == name);
+
+    if (isNameTaken) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ce nom de joueur est déjà pris. Veuillez en choisir un autre.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else {
+      final player = Player(
+        id: null,
+        name: name,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      await DatabaseHelper.createPlayer(player);
+      _refreshData();
+    }
   }
 
   Future<void> _updatePlayer(Player player) async {
@@ -122,7 +135,7 @@ class _PlayersPageState extends State<PlayersPage> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () => _deletePlayer(player.id),
+                      onPressed: () => _deletePlayer(player.id!),
                     ),
                   ],
                 ),
