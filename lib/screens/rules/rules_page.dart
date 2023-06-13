@@ -144,6 +144,31 @@ class _RulesPageState extends State<RulesPage> {
         initialIndex: currentTabIndex,
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(showShortRules ? 'Règles (courtes)' : 'Règles (longues)',
+                  style: const TextStyle(
+                    fontSize: 20
+                  ),
+                ),
+                const SizedBox(width: 15),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      showShortRules = !showShortRules;
+                    });
+                    loadJsonData();
+                  },
+                  child: FaIcon(
+                    showShortRules ? FontAwesomeIcons.toggleOn : FontAwesomeIcons.toggleOff,
+                    size: 25,
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
             TabBar(
               labelColor: AppColors.whiteColor,
               unselectedLabelColor: AppColors.whiteColor.withOpacity(0.6),
