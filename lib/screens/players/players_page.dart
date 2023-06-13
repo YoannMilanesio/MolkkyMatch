@@ -4,109 +4,89 @@ class PlayersPage extends StatefulWidget {
   const PlayersPage({super.key});
 
   @override
-  State<PlayersPage> createState() => _PlayersPageState();
+  _PlayersPageState createState() => _PlayersPageState();
 }
 
 class _PlayersPageState extends State<PlayersPage> {
-// All data
-  List<Map<String, dynamic>> myData = [];
-
-  bool _isLoading = true;
-  // This function is used to fetch all data from the database
-  void _refreshData() async {
-    final data = await DatabaseHelper.getPlayers();
-    setState(() {
-      myData = data;
-      _isLoading = false;
-    });
-  }
+  List<Player> players = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _refreshData(); // Loading the data when the app starts
+    _refreshData();
   }
 
-  final TextEditingController _nameController = TextEditingController();
+  void _refreshData() async {
+    final data = await DatabaseHelper.getPlayers();
+    setState(() {
+      players = data;
+      isLoading = false;
+    });
+  }
 
-  // This function will be triggered when the floating button is pressed
-  // It will also be triggered when you want to update an item
-  void showMyForm(int? id) async {
-    if (id != null) {
-      // id == null -> create new item
-      // id != null -> update an existing item
-      final existingData =
-      myData.firstWhere((element) => element['id'] == id);
-      _nameController.text = existingData['name'];
+  void _showForm({Player? player}) {
+    final TextEditingController nameController = TextEditingController();
+
+    if (player != null) {
+      nameController.text = player.name;
     }
 
-    showModalBottomSheet(
-        context: context,
-        elevation: 5,
-        isScrollControlled: true,
-        builder: (_) => Container(
-          padding: EdgeInsets.only(
-            top: 15,
-            left: 15,
-            right: 15,
-            // prevent the soft keyboard from covering the text fields
-            bottom: MediaQuery.of(context).viewInsets.bottom + 120,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(player == null ? 'Create Player' : 'Update Player'),
+          content: TextFormField(
+            controller: nameController,
+            decoration: const InputDecoration(
+              hintText: 'Name',
+            ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(hintText: 'Title'),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  // Save new data
-                  if (id == null) {
-                    await addPlayer();
-                  }
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                if (player == null) {
+                  await _createPlayer(nameController.text);
+                } else {
+                  player.name = nameController.text;
+                  await _updatePlayer(player);
+                }
 
-                  if (id != null) {
-                    await updateItem(id);
-                  }
-
-                  // Clear the text fields
-                  _nameController.text = '';
-
-                  // Close the bottom sheet
-                  Navigator.of(context).pop();
-                },
-                child: Text(id == null ? 'Create New' : 'Update'),
-              )
-            ],
-          ),
-        ));
+                Navigator.of(context).pop();
+                _refreshData();
+              },
+              child: Text(player == null ? 'Create' : 'Update'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-// Insert a new data to the database
-  Future<void> addPlayer() async {
-    await DatabaseHelper.createPlayer(_nameController.text);
-    _refreshData();
+  Future<void> _createPlayer(String name) async {
+    final player = Player(
+      id: 0,
+      name: name,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+    await DatabaseHelper.createPlayer(player);
   }
 
-  // Update an existing data
-  Future<void> updateItem(int id) async {
-    await DatabaseHelper.updatePlayer(
-        id, _nameController.text);
-    _refreshData();
+  Future<void> _updatePlayer(Player player) async {
+    player.updatedAt = DateTime.now();
+    await DatabaseHelper.updatePlayer(player);
   }
 
-  // Delete an item
-  void deleteItem(int id) async {
-    await DatabaseHelper.deletePlayer(id);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Successfully deleted!'),
-        backgroundColor:Colors.green
-    ));
+  void _deletePlayer(int playerId) async {
+    await DatabaseHelper.deletePlayer(playerId);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Player deleted successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
     _refreshData();
   }
 
@@ -114,40 +94,46 @@ class _PlayersPageState extends State<PlayersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sqlite CRUD'),
+        title: const Text('Players'),
       ),
-      body: _isLoading
+      body: isLoading
           ? const Center(
         child: CircularProgressIndicator(),
+      ) : players.isEmpty
+          ? const Center(
+        child: Text("No Data Available!!!"),
       )
-          : myData.isEmpty?const Center(child:  Text("No Data Available!!!")):  ListView.builder(
-        itemCount: myData.length,
-        itemBuilder: (context, index) => Card(
-          color:index%2==0?Colors.green: Colors.green[200],
-          margin: const EdgeInsets.all(15),
-          child:ListTile(
-              title: Text(myData[index]['name']),
+          : ListView.builder(
+        itemCount: players.length,
+        itemBuilder: (context, index) {
+          final player = players[index];
+          return Card(
+            color:index%2==0?Colors.green: Colors.green[200],
+            margin: const EdgeInsets.all(15),
+            child: ListTile(
+              title: Text(player.name),
               trailing: SizedBox(
                 width: 100,
                 child: Row(
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () => showMyForm(myData[index]['id']),
+                      onPressed: () => _showForm(player: player),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete),
-                      onPressed: () =>
-                          deleteItem(myData[index]['id']),
+                      onPressed: () => _deletePlayer(player.id),
                     ),
                   ],
                 ),
-              )),
-        ),
+              ),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => showMyForm(null),
+        onPressed: () => _showForm(),
       ),
     );
   }

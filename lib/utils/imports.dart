@@ -14,7 +14,7 @@ export 'package:sqflite/sqflite.dart'; // SQLite
   // -- Classes
     // Database
     export 'package:molkky_match/classes/database/database_helper.dart'; // Base de données
-    // Database
+    // Players
     export 'package:molkky_match/classes/players/player_class.dart'; // Class des joueurs
 
 
