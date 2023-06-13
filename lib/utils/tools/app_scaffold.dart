@@ -4,8 +4,9 @@ class AppScaffold extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final double hauteur;
   final Widget body;
+  final Widget? floatingActionButton;
 
-  const AppScaffold({super.key, required this.scaffoldKey, required this.hauteur, required this.body});
+  const AppScaffold({super.key, required this.scaffoldKey, required this.hauteur, required this.body, this.floatingActionButton});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,7 @@ class AppScaffold extends StatelessWidget {
         ],
       ),
       drawer: buildDrawer(context, scaffoldKey),
+      floatingActionButton: floatingActionButton,
     );
   }
 }
