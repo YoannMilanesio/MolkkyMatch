@@ -7,11 +7,18 @@ export 'dart:convert'; // Library Convert pour Json
 export 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Font Awesome Icons
 export 'package:google_fonts/google_fonts.dart'; // Google Fonts
 export 'package:flutter_blurhash/flutter_blurhash.dart'; // Blur Hash
-
+export 'package:sqflite/sqflite.dart'; // SQLite
 
 // --- MY FILES
 
-  // Routes
+  // -- Classes
+    // Database
+    export 'package:molkky_match/classes/database/database_helper.dart'; // Base de données
+    // Database
+    export 'package:molkky_match/classes/players/player_class.dart'; // Class des joueurs
+
+
+  // -- Routes
     export 'package:molkky_match/routes/routes.dart'; // Routes de l'app
 
 
@@ -38,9 +45,9 @@ export 'package:flutter_blurhash/flutter_blurhash.dart'; // Blur Hash
     export 'package:molkky_match/utils/theme/app_colors.dart'; // Liste des couleurs utilisées
     // - Tools
     export 'package:molkky_match/utils/tools/app_scaffold.dart'; // Scaffold de l'appli
-    export 'package:molkky_match/utils/tools/appbar.dart'; // Scaffold de l'appli
-    export 'package:molkky_match/utils/tools/drawer.dart'; // Scaffold de l'appli
+    export 'package:molkky_match/utils/tools/appbar.dart'; // AppBars de l'appli
+    export 'package:molkky_match/utils/tools/drawer.dart'; // Drawer de l'appli
     export 'package:molkky_match/utils/tools/fade_page_route.dart'; // Transition fade entres pages
-    export 'package:molkky_match/utils/tools/home_scaffold.dart'; // Scaffold de l'appli
+    export 'package:molkky_match/utils/tools/home_scaffold.dart'; // Scaffold de la page d'accueil
     // - Widgets
     export 'package:molkky_match/utils/widgets/hex_color.dart'; // Convert HexCode to Flutter Color
