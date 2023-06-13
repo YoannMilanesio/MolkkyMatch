@@ -1,0 +1,35 @@
+{
+  "rules": [
+    {
+      "title": "But du jeu",
+      "paragraphs": [
+        "Le principe du jeu est simple. A l'aide d'un lanceur appelé Mölkky, il faut faire tomber des quilles en bois numérotées de 1 à 12 qui rapportent des points. Le premier joueur/équipe arrivant à obtenir le score exact de 50 points remporte la partie."
+      ]
+    },
+    {
+      "title": "Mise en place",
+      "subtitles": [
+        {
+          "subtitle": null,
+          "paragraphs": [
+            "Au début d'une partie, les quilles sont placées à 3,50m (+/- 10cm) de la zone de lancer des joueurs. Les quilles sont placées suivant un ordre défini (voir illustration ci-après). Quand une quille a été abattue, elle est relevée (sans la soulever du sol) exactement à l'endroit où elle a atterri."
+          ],
+          "photo": "assets/img/quilles_placement.png"
+        }
+      ]
+    },
+    {
+      "title": "Comment jouer",
+      "paragraphs": [
+        "Les joueurs (ou les équipes) jouent chacun à leur tour, essayant d'abattre les quilles numérotées en lançant le Mölkky de la zone de lancement. Tous les styles de lancer sont autorisés. Une quille n'est considérée comme abattue que si elle est tombée entièrement au sol. Si une quille se trouve en équilibre sur une autre quille, ou un bout de terrain, elle n'est pas considéré comme abattue."
+      ]
+    },
+    {
+      "title": "Système de points",
+      "paragraphs": [
+        "Un joueur peut marquer des points de l'une des deux façons suivantes:\n  - Abattre une quille seule rapporte autant de points que son numéro l'indique\n  - Abattre 2 quilles ou plus, rapporte autant de points que le nombre de quilles abattues\n",
+        "Le joueur gagnant est le premier à atteindre exactement 50 points. Si le score d'un joueur dépasse 50, il est ramené à 25. Un joueur qui n'abat aucune quille, 3 tours d'affilée, est éliminé de la partie."
+      ]
+    }
+  ]
+}

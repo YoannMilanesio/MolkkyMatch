@@ -11,6 +11,7 @@ class _RulesPageState extends State<RulesPage> {
   List<dynamic> molkkyData = [];
   List<dynamic> molkkoutData = [];
   int currentTabIndex = 0;
+  bool showShortRules = true;
 
   @override
   void initState() {
@@ -19,13 +20,18 @@ class _RulesPageState extends State<RulesPage> {
   }
 
   Future<void> loadJsonData() async {
-    String molkkyJsonString = await rootBundle.loadString('lib/screens/rules/doc/molkky_rules.json');
-    String molkkoutJsonString = await rootBundle.loadString('lib/screens/rules/doc/molkkout_rules.json');
+    String molkkyJsonString = await rootBundle.loadString(
+      showShortRules ? 'lib/screens/rules/doc/molkky_rules_short.json' : 'lib/screens/rules/doc/molkky_rules.json',
+    );
+    String molkkoutJsonString = await rootBundle.loadString(
+      showShortRules ? 'lib/screens/rules/doc/molkkout_rules_short.json' : 'lib/screens/rules/doc/molkkout_rules.json',
+    );
     setState(() {
       molkkyData = jsonDecode(molkkyJsonString)['rules'];
       molkkoutData = jsonDecode(molkkoutJsonString)['rules'];
     });
   }
+
 
   Widget buildSubtitleWidget(dynamic subtitle) {
     final subtitleText = subtitle['subtitle'];
@@ -37,13 +43,13 @@ class _RulesPageState extends State<RulesPage> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
+          child: subtitleText != null ? Text(
             subtitleText,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
-          ),
+          ) : Container(),
         ),
         ...paragraphs.map<Widget>((paragraph) => Padding(
           padding: const EdgeInsets.all(16.0),
