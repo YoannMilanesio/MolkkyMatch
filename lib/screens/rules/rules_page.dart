@@ -47,15 +47,24 @@ class _RulesPageState extends State<RulesPage> {
         ),
         ...paragraphs.map<Widget>((paragraph) => Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(paragraph),
+          child: Text(
+            paragraph,
+            textAlign: TextAlign.justify,
+            style: const TextStyle(
+              color: AppColors.whiteColor,
+              fontSize: 16,
+            ),
+          ),
         )),
         if (photoPath != null) // Check if photoPath exists
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Image.asset(
-              photoPath,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            child: Center(
+              child: Image.asset(
+                photoPath,
+                width: MediaQuery.of(context).size.width / 1.5,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
       ],
@@ -80,7 +89,7 @@ class _RulesPageState extends State<RulesPage> {
             child: Text(
               '$index) $title',
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -94,7 +103,14 @@ class _RulesPageState extends State<RulesPage> {
             : paragraphs.map<Widget>((paragraph) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(paragraph),
+            child: Text(
+              paragraph,
+              textAlign: TextAlign.justify,
+              style: const TextStyle(
+                color: AppColors.whiteColor,
+                fontSize: 16,
+              ),
+            ),
           );
         }).toList();
 
@@ -116,7 +132,7 @@ class _RulesPageState extends State<RulesPage> {
 
     return AppScaffold(
       scaffoldKey: scaffoldKey,
-      hauteur: 20,
+      hauteur: 0,
       body: DefaultTabController(
         length: 2,
         initialIndex: currentTabIndex,
