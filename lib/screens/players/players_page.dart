@@ -36,27 +36,64 @@ class _PlayersPageState extends State<PlayersPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(player == null ? 'Create Player' : 'Update Player'),
-          content: TextFormField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              hintText: 'Name',
+          title: Center(
+            child: Text(player == null ? 'Ajouter joueur' : 'Modifier joueur',
+              style: TextStyle(
+                fontSize: 23,
+                color: HexColor("222222"),
+              ),
             ),
           ),
+          content: TextFormField(
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: HexColor("222222")
+            ),
+            controller: nameController,
+          ),
           actions: [
-            ElevatedButton(
-              onPressed: () async {
-                if (player == null) {
-                  await _createPlayer(nameController.text);
-                } else {
-                  player.name = nameController.text;
-                  await _updatePlayer(player);
-                }
+            Center(child: SizedBox(width: MediaQuery.of(context).size.width / 1.5, child: Divider(color: HexColor("9D9D9D")))),
+            Center(
+              child: GestureDetector(
+                onTap: () async {
+                  if (player == null) {
+                    await _createPlayer(nameController.text);
+                  } else {
+                    player.name = nameController.text;
+                    await _updatePlayer(player);
+                  }
 
-                Navigator.of(context).pop();
-                _refreshData();
-              },
-              child: Text(player == null ? 'Create' : 'Update'),
+                  Navigator.of(context).pop();
+                  _refreshData();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text(player == null ? 'Ajouter' : 'Modifier',
+                    style: TextStyle(
+                      color: HexColor("222222"),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Center(child: SizedBox(width: MediaQuery.of(context).size.width / 1.5, child: Divider(color: HexColor("9D9D9D")))),
+            Center(
+              child: GestureDetector(
+                onTap: () async {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text('Annuler',
+                    style: TextStyle(
+                        color: HexColor("222222"),
+                        fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         );
@@ -105,48 +142,90 @@ class _PlayersPageState extends State<PlayersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Players'),
-      ),
-      body: isLoading
-          ? const Center(
-        child: CircularProgressIndicator(),
-      ) : players.isEmpty
-          ? const Center(
-        child: Text("No Data Available!!!"),
-      )
-          : ListView.builder(
-        itemCount: players.length,
-        itemBuilder: (context, index) {
-          final player = players[index];
-          return Card(
-            color:index%2==0?Colors.green: Colors.green[200],
-            margin: const EdgeInsets.all(15),
-            child: ListTile(
-              title: Text(player.name),
-              trailing: SizedBox(
-                width: 100,
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () => _showForm(player: player),
+    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+    Size size = MediaQuery.of(context).size;
+
+    return AppScaffold(
+      scaffoldKey: scaffoldKey,
+      hauteur: 30,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Liste des joueurs",
+                style: AppStyles.pageTitleStyle,
+              ),
+              GestureDetector(
+                onTap: () => _showForm(),
+                child: Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                  color: AppColors.whiteColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FaIcon(
+                      FontAwesomeIcons.plus,
+                      size: 25,
+                      color: HexColor("222222"),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => _deletePlayer(player.id!),
-                    ),
-                  ],
+                  ),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 15),
+          isLoading
+              ? const Center(
+            child: CircularProgressIndicator(),
+          ) : players.isEmpty
+              ? const Center(
+            child: Text("No Data Available!!!"),
+          )
+              : SizedBox(
+                height: size.height,
+                child: ListView.builder(
+                  padding: EdgeInsets.only(top: 0, bottom: MediaQuery.of(context).size.height / 3),
+                  itemCount: players.length,
+                  itemBuilder: (context, index) {
+                      final player = players[index];
+                      return Card(
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        color: AppColors.whiteColor.withOpacity(0.65),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: ListTile(
+                          title: Text(
+                            player.name,
+                            style: TextStyle(
+                              color: HexColor("222222"),
+                              fontSize: 22,
+                            ),
+                          ),
+                          trailing: SizedBox(
+                            width: 100,
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () => _showForm(player: player),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () => _deletePlayer(player.id!),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                  },
                 ),
               ),
-            ),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => _showForm(),
+        ],
       ),
     );
   }
