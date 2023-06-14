@@ -112,8 +112,13 @@ class SelectPlayersPageState extends State<SelectPlayersPage> {
               selectedPlayersList.add(players[i]);
             }
           }
-          Navigator.pushNamed(context, '/match/assign_teams');
-
+          // Navigator.pushNamed(context, '/match/assign_teams');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AssignTeamsPage(selectedPlayersList),
+            ),
+          );
         },
       ),
     );

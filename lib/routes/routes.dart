@@ -19,8 +19,6 @@ class RouteGenerator {
         return FadePageRoute(page: const StatisticsPage());
       case '/match/select_players':
         return FadePageRoute(page: const SelectPlayersPage());
-      case '/match/assign_teams':
-        return FadePageRoute(page: const AssignTeamsPage());
       default:
         return FadePageRoute(page: const NotFoundPage());
     }
