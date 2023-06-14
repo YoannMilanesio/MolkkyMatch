@@ -15,12 +15,14 @@ class _GamePageState extends State<GamePage> {
   int previousScore = 0;
   int previousTeamIndex = 0;
   List<int> totalScores = [];
+  List<List<int>> roundScores = [];
   bool gameEnded = false;
 
   @override
   void initState() {
     super.initState();
     totalScores = List.filled(widget.match.teams.length, 0);
+    roundScores = List<List<int>>.generate(widget.match.teams.length, (_) => []);
   }
 
   void nextTurn() {
@@ -42,6 +44,7 @@ class _GamePageState extends State<GamePage> {
       previousTeamIndex = currentTeamIndex;
 
       totalScores[currentTeamIndex] += points;
+      roundScores[currentTeamIndex].add(points);
 
       // Si le score dépasse 50, on le ramène à 25
       if (totalScores[currentTeamIndex] > 50) {
@@ -143,9 +146,17 @@ class _GamePageState extends State<GamePage> {
               children: List.generate(widget.match.teams.length, (index) {
                 final team = widget.match.teams[index];
                 final score = totalScores[index];
+                final teamRoundScores = roundScores[index];
                 return ListTile(
                   title: Text('Équipe ${index + 1}'),
-                  subtitle: Text('Score: $score'),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Score: $score'),
+                      Text(teamRoundScores.join(', ')),
+
+                    ],
+                  ),
                   trailing: Column(
                     children: List.generate(team.length, (playerIndex) {
                       final player = team[playerIndex];
