@@ -19,9 +19,38 @@ class DatabaseHelper {
             updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
           )
         """);
+
+        await db.execute('''
+          CREATE TABLE matches (
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+            date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            teams TEXT,
+            scores TEXT
+          )
+        ''');
       },
     );
   }
+
+  /*static Future<int> createMatch(List<Player> team1Players, List<Player> team2Players) async {
+    final db = await _getDatabase();
+
+    final formattedDate = DateTime.now().toIso8601String();
+
+    final team1PlayerNames = team1Players.map((player) => player.name).join(',');
+    final team2PlayerNames = team2Players.map((player) => player.name).join(',');
+
+    final match = {
+      'date': formattedDate,
+      'team1': team1PlayerNames,
+      'team2': team2PlayerNames,
+    };
+
+    final id = await db.insert('matches', match);
+
+    return id;
+  }*/
+
 
   static Future<bool> createPlayer(Player player) async {
     final db = await _getDatabase();

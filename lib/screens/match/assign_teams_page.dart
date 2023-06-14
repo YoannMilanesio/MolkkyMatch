@@ -127,7 +127,32 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.arrow_forward),
         onPressed: () {
-          // Proceed to the next step
+          // Créez les équipes pour le match
+          List<List<Player>> teams = [];
+          for (int i = 0; i < selectedTeamCount; i++) {
+            teams.add([]);
+          }
+
+          for (int i = 0; i < widget.selectedPlayers.length; i++) {
+            for (int j = 0; j < selectedTeamCount; j++) {
+              if (selectedTeams[i][j] == teamColors[j].toString()) {
+                teams[j].add(widget.selectedPlayers[i]);
+              }
+            }
+          }
+
+          // Créez les scores initiaux pour chaque équipe (peut être tous à 0 pour commencer)
+          List<int> scores = List.filled(selectedTeamCount, 0);
+
+          // Créez l'instance de Match avec les équipes et les scores
+          Match match = Match(id: 0, teams: teams, scores: scores, date: DateTime.now());
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GamePage(match: match),
+            ),
+          );
         },
       ),
     );

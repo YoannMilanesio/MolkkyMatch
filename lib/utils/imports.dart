@@ -14,6 +14,8 @@ export 'package:sqflite/sqflite.dart'; // SQLite
   // -- Classes
     // Database
     export 'package:molkky_match/classes/database/database_helper.dart'; // Base de données
+    // Match
+    export 'package:molkky_match/classes/match/match_class.dart'; // Class des joueurs
     // Players
     export 'package:molkky_match/classes/players/player_class.dart'; // Class des joueurs
 
@@ -34,6 +36,7 @@ export 'package:sqflite/sqflite.dart'; // SQLite
     // Match
     export 'package:molkky_match/screens/match/assign_teams_page.dart'; // Assignation des équipes du match
     export 'package:molkky_match/screens/match/select_players_page.dart'; // Sélection des joueurs du match
+    export 'package:molkky_match/screens/match/game_page.dart'; // Partie
     // Players
     export 'package:molkky_match/screens/players/players_page.dart'; // Page des joueurs
     // Rules
