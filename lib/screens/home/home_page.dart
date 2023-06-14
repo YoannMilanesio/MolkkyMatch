@@ -39,7 +39,9 @@ class HomePage extends StatelessWidget {
           Column(
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/match/select_players');
+                },
                 style: AppStyles.primaryButtonStyle,
                 child: const Padding(
                   padding: EdgeInsets.all(15),

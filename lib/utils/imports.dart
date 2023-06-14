@@ -31,6 +31,9 @@ export 'package:sqflite/sqflite.dart'; // SQLite
     export 'package:molkky_match/screens/history/history_page.dart'; // Page d'historique
     // Home
     export 'package:molkky_match/screens/home/home_page.dart'; // Page d'accueil
+    // Match
+    export 'package:molkky_match/screens/match/assign_teams_page.dart'; // Assignation des équipes du match
+    export 'package:molkky_match/screens/match/select_players_page.dart'; // Sélection des joueurs du match
     // Players
     export 'package:molkky_match/screens/players/players_page.dart'; // Page des joueurs
     // Rules
