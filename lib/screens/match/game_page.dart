@@ -17,6 +17,7 @@ class _GamePageState extends State<GamePage> {
   List<int> totalScores = [];
   List<List<int>> roundScores = [];
   bool gameEnded = false;
+  bool isNumberSelected = false;
 
   @override
   void initState() {
@@ -65,7 +66,15 @@ class _GamePageState extends State<GamePage> {
         showWinnerDialog(currentTeamIndex);
       } else {
         nextTurn();
+        isNumberSelected = false;
       }
+    });
+  }
+
+  void missedThrow() {
+    setState(() {
+      roundScores[currentTeamIndex].add(0);
+      nextTurn();
     });
   }
 
@@ -134,7 +143,13 @@ class _GamePageState extends State<GamePage> {
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      currentPoints = points;
+                      if (currentPoints == points) {
+                        currentPoints = 0;
+                        isNumberSelected = false;
+                      } else {
+                        currentPoints = points;
+                        isNumberSelected = true;
+                      }
                     });
                   },
                   child: Container(
@@ -159,8 +174,8 @@ class _GamePageState extends State<GamePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: currentPoints > 0 ? () => addPoints(currentPoints) : null,
-                  child: const Text('Valider'),
+                  onPressed: isNumberSelected ? () => addPoints(currentPoints) : () => missedThrow(),
+                  child: Text(isNumberSelected ? 'Valider' : 'Raté'),
                 ),
                 const SizedBox(width: 15),
                 ElevatedButton(
@@ -186,7 +201,7 @@ class _GamePageState extends State<GamePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Score: $score'),
-                      Text(teamRoundScores.join(', ')),
+                      Text(teamRoundScores.map((score) => score == 0 ? 'X' : score.toString()).join(', '),),
 
                     ],
                   ),
