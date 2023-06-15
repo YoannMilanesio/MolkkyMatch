@@ -208,7 +208,7 @@ class _GamePageState extends State<GamePage> {
                   trailing: Column(
                     children: List.generate(team.length, (playerIndex) {
                       final player = team[playerIndex];
-                      return Text(player.name);
+                      return Expanded(child: Text(player.name));
                     }),
                   ),
                 );
