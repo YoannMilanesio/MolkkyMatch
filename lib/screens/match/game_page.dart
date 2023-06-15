@@ -32,6 +32,13 @@ class _GamePageState extends State<GamePage> {
     });
   }
 
+  void prevTurn() {
+    setState(() {
+      currentPoints = 0;
+      currentTeamIndex = (currentTeamIndex - 1) % widget.match.teams.length;
+    });
+  }
+
   void addPoints(int points) {
     setState(() {
       // Vérifier si la partie est déjà terminée
@@ -62,16 +69,34 @@ class _GamePageState extends State<GamePage> {
     });
   }
 
+  void cancelLastTurn() {
+    setState(() {
+      int previousTeamIndex;
+      if (currentTeamIndex == 0) {
+        previousTeamIndex = widget.match.teams.length - 1;
+      } else {
+        previousTeamIndex = currentTeamIndex - 1;
+      }
+      int removedPoints = roundScores[previousTeamIndex].removeLast();
+      totalScores[previousTeamIndex] -= removedPoints;
+      prevTurn();
+    });
+  }
+
+  bool areAllScoresZero() {
+    return totalScores.every((score) => score == 0);
+  }
+
   void showWinnerDialog(int teamIndex) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Partie terminée'),
+          title: const Text('Partie terminée'),
           content: Text('L\'équipe ${teamIndex + 1} a gagné !'),
           actions: [
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 // Ajoutez ici votre logique pour gérer la fin de la partie
                 Navigator.of(context).pop();
@@ -87,8 +112,6 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-    Size size = MediaQuery.of(context).size;
-
     return AppScaffold(
       scaffoldKey: scaffoldKey,
       hauteur: 30,
@@ -132,9 +155,19 @@ class _GamePageState extends State<GamePage> {
               }),
             ),
             const SizedBox(height: 15),
-            ElevatedButton(
-              onPressed: currentPoints > 0 ? () => addPoints(currentPoints) : null,
-              child: const Text('Valider'),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: currentPoints > 0 ? () => addPoints(currentPoints) : null,
+                  child: const Text('Valider'),
+                ),
+                const SizedBox(width: 15),
+                ElevatedButton(
+                  onPressed: areAllScoresZero() || gameEnded ? null : () => cancelLastTurn(),
+                  child: const Text('Annuler'),
+                ),
+              ],
             ),
             const SizedBox(height: 15),
             const Text(
