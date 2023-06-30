@@ -1,20 +1,20 @@
 class Player {
-  int? id;
-  String name;
+  int playerId;
+  String playerName;
   DateTime createdAt;
   DateTime updatedAt;
 
   Player({
-    required this.id,
-    required this.name,
+    required this.playerId,
+    required this.playerName,
     required this.createdAt,
     required this.updatedAt,
   });
 
   factory Player.fromMap(Map<String, dynamic> map) {
     return Player(
-      id: map['id'],
-      name: map['name'],
+      playerId: map['playerId'],
+      playerName: map['playerName'],
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
     );
@@ -22,10 +22,15 @@ class Player {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'name': name,
+      'playerId': playerId,
+      'playerName': playerName,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
+  }
+
+  @override
+  String toString() {
+    return 'Player(name: $playerName, id: $playerId)'; // Remplacez les propriétés selon votre classe Player
   }
 }

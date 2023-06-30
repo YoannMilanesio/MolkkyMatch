@@ -1,0 +1,55 @@
+class Player {
+  int playerId;
+  String playerName;
+
+  Player({required this.playerId, required this.playerName});
+}
+
+class Team {
+  int teamId;
+  List<Player> players;
+
+  Team({required this.teamId, required this.players});
+}
+
+class Round {
+  int roundId;
+  int matchId;
+  int score;
+  int playerId;
+  int teamId;
+
+  Round({required this.roundId, required this.matchId, required this.score, required this.playerId, required this.teamId});
+}
+
+class Match {
+  int matchId;
+  DateTime date;
+  List<Team> teams;
+  List<Round> rounds;
+
+  Match({required this.matchId, required this.date, required this.teams, required this.rounds});
+}
+
+void main() {
+  // Création des joueurs
+  Player player1 = Player(playerId: 1, playerName: "Joueur 1");
+  Player player2 = Player(playerId: 2, playerName: "Joueur 2");
+  Player player3 = Player(playerId: 3, playerName: "Joueur 3");
+  Player player4 = Player(playerId: 4, playerName: "Joueur 4");
+
+  // Création des équipes
+  Team teamA = Team(teamId: 1, players: [player1, player2]);
+  Team teamB = Team(teamId: 2, players: [player3, player4]);
+
+  // Création des rounds
+  Round round1 = Round(roundId: 1, matchId: 1, score: 10, playerId: player1.playerId, teamId: teamA.teamId);
+  Round round2 = Round(roundId: 2, matchId: 1, score: 8, playerId: player3.playerId, teamId: teamB.teamId);
+  // ...
+
+  // Création du match
+  Match match = Match(matchId: 1, date: DateTime.now(), teams: [teamA, teamB], rounds: [round1, round2]);
+
+  // Utilisation des objets match, teams, rounds, players, etc.
+  // ...
+}

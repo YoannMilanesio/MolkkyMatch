@@ -29,7 +29,7 @@ class _PlayersPageState extends State<PlayersPage> {
     final TextEditingController nameController = TextEditingController();
 
     if (player != null) {
-      nameController.text = player.name;
+      nameController.text = player.playerName;
     }
 
     showDialog(
@@ -59,7 +59,7 @@ class _PlayersPageState extends State<PlayersPage> {
                   if (player == null) {
                     await _createPlayer(nameController.text);
                   } else {
-                    player.name = nameController.text;
+                    player.playerName = nameController.text;
                     await _updatePlayer(player);
                   }
 
@@ -103,7 +103,7 @@ class _PlayersPageState extends State<PlayersPage> {
 
   Future<void> _createPlayer(String name) async {
     final existingPlayers = await DatabaseHelper.getPlayers();
-    final isNameTaken = existingPlayers.any((player) => player.name == name);
+    final isNameTaken = existingPlayers.any((player) => player.playerName == name);
 
     if (isNameTaken) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -114,8 +114,8 @@ class _PlayersPageState extends State<PlayersPage> {
       );
     } else {
       final player = Player(
-        id: null,
-        name: name,
+        playerId: DateTime.now().microsecondsSinceEpoch,
+        playerName: name,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -130,14 +130,18 @@ class _PlayersPageState extends State<PlayersPage> {
   }
 
   void _deletePlayer(int playerId) async {
-    await DatabaseHelper.deletePlayer(playerId);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Player deleted successfully!'),
-        backgroundColor: Colors.green,
-      ),
-    );
-    _refreshData();
+    final playerToDelete = await DatabaseHelper.getPlayer(playerId);
+    if (playerToDelete != null) {
+      await DatabaseHelper.deletePlayer(playerId);
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${playerToDelete.playerName} a été supprimé avec succès !'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      _refreshData();
+    }
   }
 
   @override
@@ -193,13 +197,14 @@ class _PlayersPageState extends State<PlayersPage> {
                   itemBuilder: (context, index) {
                       final player = players[index];
                       return Card(
+                        key: UniqueKey(),
                         elevation: 3,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         color: AppColors.whiteColor.withOpacity(0.65),
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         child: ListTile(
                           title: Text(
-                            player.name,
+                            player.playerName,
                             style: TextStyle(
                               color: HexColor("222222"),
                               fontSize: 22,
@@ -215,7 +220,7 @@ class _PlayersPageState extends State<PlayersPage> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete),
-                                  onPressed: () => _deletePlayer(player.id!),
+                                  onPressed: () => _deletePlayer(player.playerId),
                                 ),
                               ],
                             ),

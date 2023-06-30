@@ -79,13 +79,14 @@ class SelectPlayersPageState extends State<SelectPlayersPage> {
                 final isSelected = selectedPlayers[index];
 
                 return Card(
+                  key: ValueKey(players[index].playerId),
                   elevation: 3,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   color: AppColors.whiteColor.withOpacity(0.65),
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListTile(
                     title: Text(
-                      player.name,
+                      player.playerName,
                       style: TextStyle(
                         color: HexColor("222222"),
                         fontSize: 22,

@@ -3,26 +3,30 @@ import 'package:molkky_match/utils/imports.dart';
 class AssignTeamsPage extends StatefulWidget {
   final List<Player> selectedPlayers;
 
-  const AssignTeamsPage(this.selectedPlayers, {super.key});
+  const AssignTeamsPage(this.selectedPlayers, {Key? key}) : super(key: key);
 
   @override
   AssignTeamsPageState createState() => AssignTeamsPageState();
 }
 
 class AssignTeamsPageState extends State<AssignTeamsPage> {
-  List<List<String>> selectedTeams = [];
-  List<Color> teamColors = [HexColor("2A46A3"), HexColor("BF0C0C"), HexColor("2E784C")];
+  List<Team> teams = [];
+  List<Color> teamColors = [
+    HexColor("2A46A3"),
+    HexColor("BF0C0C"),
+    HexColor("2E784C"),
+  ];
   int selectedTeamCount = 2;
 
   @override
   void initState() {
     super.initState();
-    selectedTeams = List.generate(widget.selectedPlayers.length, (_) => List.filled(selectedTeamCount, ''));
+    initializeTeams();
   }
 
-  void updateSelectedTeams() {
-    setState(() {
-      selectedTeams = List.generate(widget.selectedPlayers.length, (_) => List.filled(selectedTeamCount, ''));
+  void initializeTeams() {
+    teams = List.generate(selectedTeamCount, (index) {
+      return Team(teamId: index + 1, teamPlayers: [], teamScore: 0);
     });
   }
 
@@ -52,7 +56,7 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
                 onChanged: (value) {
                   setState(() {
                     selectedTeamCount = value ? 3 : 2;
-                    updateSelectedTeams();
+                    initializeTeams();
                   });
                 },
                 activeTrackColor: Colors.grey,
@@ -77,7 +81,7 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: ListTile(
                     title: Text(
-                      player.name,
+                      player.playerName,
                       style: TextStyle(
                         color: HexColor("222222"),
                         fontSize: 22,
@@ -88,16 +92,25 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
                       children: List.generate(
                         selectedTeamCount,
                             (teamIndex) {
-                          return InkWell(
+                              final team = teams[teamIndex];
+                              final isSelected = team.teamPlayers.contains(player);
+
+                              return InkWell(
                             onTap: () {
                               setState(() {
-                                if (selectedTeams[index][teamIndex] == teamColors[teamIndex].toString()) {
+                                if (isSelected) {
                                   // Si le joueur est déjà assigné à cette équipe, désélectionnez-le
-                                  selectedTeams[index][teamIndex] = '';
+                                  team.teamPlayers.remove(player);
                                 } else {
-                                  // Sinon, assignez-le à cette équipe et désélectionnez l'équipe précédente
-                                  selectedTeams[index] = List.filled(selectedTeamCount, '');
-                                  selectedTeams[index][teamIndex] = teamColors[teamIndex].toString();
+                                  // Sinon, assignez-le à cette équipe
+                                  team.teamPlayers.add(player);
+
+                                  // Vérifiez si le joueur était assigné à une autre équipe et le supprimer de cette équipe
+                                  for (var otherTeam in teams) {
+                                    if (otherTeam != team && otherTeam.teamPlayers.contains(player)) {
+                                      otherTeam.teamPlayers.remove(player);
+                                    }
+                                  }
                                 }
                               });
                             },
@@ -106,7 +119,7 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
                               height: 20,
                               margin: const EdgeInsets.symmetric(horizontal: 5),
                               decoration: BoxDecoration(
-                                color: selectedTeams[index][teamIndex] == teamColors[teamIndex].toString()
+                                color: teams[teamIndex].teamPlayers.contains(player)
                                     ? teamColors[teamIndex]
                                     : Colors.transparent,
                                 shape: BoxShape.circle,
@@ -126,26 +139,22 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.arrow_forward),
-        onPressed: () {
+        onPressed: () async {
           // Créez les équipes pour le match
-          List<List<Player>> teams = [];
-          for (int i = 0; i < selectedTeamCount; i++) {
-            teams.add([]);
-          }
+          List<List<Player>> teamPlayers = teams.map((team) => team.teamPlayers).toList();
 
-          for (int i = 0; i < widget.selectedPlayers.length; i++) {
-            for (int j = 0; j < selectedTeamCount; j++) {
-              if (selectedTeams[i][j] == teamColors[j].toString()) {
-                teams[j].add(widget.selectedPlayers[i]);
-              }
-            }
-          }
+          // Créez les rounds (pour l'instant vide)
+          List<Round> rounds = [];
 
-          // Créez les scores initiaux pour chaque équipe (peut être tous à 0 pour commencer)
-          List<int> scores = List.filled(selectedTeamCount, 0);
+          // Créez l'instance de Match avec les équipes, les scores et les rounds
+          Match match = Match(
+            matchId: 0,
+            matchDate: DateTime.now(),
+            matchTeams: teams,
+            matchRounds: rounds,
+          );
 
-          // Créez l'instance de Match avec les équipes et les scores
-          Match match = Match(id: 0, teams: teams, scores: scores, date: DateTime.now());
+          await DatabaseHelper.createMatch(match);
 
           Navigator.push(
             context,
@@ -153,6 +162,8 @@ class AssignTeamsPageState extends State<AssignTeamsPage> {
               builder: (context) => GamePage(match: match),
             ),
           );
+
+          print(teamPlayers.map((team) => team.map((player) => player.playerName).toList()).toList());
         },
       ),
     );

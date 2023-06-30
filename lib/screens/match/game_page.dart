@@ -3,10 +3,10 @@ import 'package:molkky_match/utils/imports.dart';
 class GamePage extends StatefulWidget {
   final Match match;
 
-  const GamePage({super.key, required this.match});
+  const GamePage({Key? key, required this.match}) : super(key: key);
 
   @override
-  State<GamePage> createState() => _GamePageState();
+  _GamePageState createState() => _GamePageState();
 }
 
 class _GamePageState extends State<GamePage> {
@@ -22,21 +22,21 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     super.initState();
-    totalScores = List.filled(widget.match.teams.length, 0);
-    roundScores = List<List<int>>.generate(widget.match.teams.length, (_) => []);
+    totalScores = List.filled(widget.match.matchTeams.length, 0);
+    roundScores = List<List<int>>.generate(widget.match.matchTeams.length, (_) => []);
   }
 
   void nextTurn() {
     setState(() {
       currentPoints = 0;
-      currentTeamIndex = (currentTeamIndex + 1) % widget.match.teams.length;
+      currentTeamIndex = (currentTeamIndex + 1) % widget.match.matchTeams.length;
     });
   }
 
   void prevTurn() {
     setState(() {
       currentPoints = 0;
-      currentTeamIndex = (currentTeamIndex - 1) % widget.match.teams.length;
+      currentTeamIndex = (currentTeamIndex - 1) % widget.match.matchTeams.length;
     });
   }
 
@@ -54,6 +54,14 @@ class _GamePageState extends State<GamePage> {
       totalScores[currentTeamIndex] += points;
       roundScores[currentTeamIndex].add(points);
 
+      widget.match.matchRounds.add(Round(
+        roundId: widget.match.matchRounds.length + 1,
+        matchId: widget.match.matchId,
+        score: points,
+        playerId: widget.match.matchTeams.first.teamPlayers.first.playerId,
+        teamId: widget.match.matchTeams.first.teamId,
+      ));
+
       // Si le score dépasse 50, on le ramène à 25
       if (totalScores[currentTeamIndex] > 50) {
         totalScores[currentTeamIndex] = 25;
@@ -68,6 +76,9 @@ class _GamePageState extends State<GamePage> {
         nextTurn();
         isNumberSelected = false;
       }
+
+      _updateTeamScores(totalScores);
+
     });
   }
 
@@ -82,7 +93,7 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       int previousTeamIndex;
       if (currentTeamIndex == 0) {
-        previousTeamIndex = widget.match.teams.length - 1;
+        previousTeamIndex = widget.match.matchTeams.length - 1;
       } else {
         previousTeamIndex = currentTeamIndex - 1;
       }
@@ -96,6 +107,14 @@ class _GamePageState extends State<GamePage> {
     return totalScores.every((score) => score == 0);
   }
 
+  Future<void> _updateTeamScores(List<int> totalScores) async {
+    for (int i = 0; i < widget.match.matchTeams.length; i++) {
+      final team = widget.match.matchTeams[i];
+      final score = totalScores[i];
+      team.updateTeamScore(score);
+    }
+  }
+
   void showWinnerDialog(int teamIndex) {
     showDialog(
       context: context,
@@ -106,9 +125,36 @@ class _GamePageState extends State<GamePage> {
           actions: [
             TextButton(
               child: const Text('OK'),
-              onPressed: () {
-                // Ajoutez ici votre logique pour gérer la fin de la partie
-                Navigator.of(context).pop();
+              onPressed: () async {
+                // Mettre à jour le match dans la base de données
+                gameEnded = true;
+
+                _updateTeamScores(totalScores);
+
+                print(widget.match.toString());
+
+                // await DatabaseHelper.updateMatch(widget.match);
+
+                final matchesFromDB = await DatabaseHelper.getMatches();
+
+                for (final match in matchesFromDB) {
+                  print('Match ID: ${match.matchId}');
+                  print('Match Teams: ${match.matchTeams}');
+                  print('Match Rounds: ${match.matchRounds}');
+                  print('---------------------------');
+                }
+                // Naviguer vers la route '/'
+                //Navigator.of(context).pushNamed('/');
+              },
+            ),
+            TextButton(
+              child: const Text('TEST'),
+              onPressed: () async {
+                gameEnded = true;
+                _updateTeamScores(totalScores);
+
+                print(widget.match.toString());
+
               },
             ),
           ],
@@ -116,7 +162,6 @@ class _GamePageState extends State<GamePage> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -182,6 +227,13 @@ class _GamePageState extends State<GamePage> {
                   onPressed: areAllScoresZero() || gameEnded ? null : () => cancelLastTurn(),
                   child: const Text('Annuler'),
                 ),
+                /* const SizedBox(width: 15),
+                ElevatedButton(
+                  onPressed: () {
+                    print(widget.match.matchRounds.map((round) => round.toString()).toList());
+                  },
+                  child: const Text('TEST'),
+                ), */
               ],
             ),
             const SizedBox(height: 15),
@@ -191,8 +243,8 @@ class _GamePageState extends State<GamePage> {
             ),
             const SizedBox(height: 10),
             Column(
-              children: List.generate(widget.match.teams.length, (index) {
-                final team = widget.match.teams[index];
+              children: List.generate(widget.match.matchTeams.length, (index) {
+                final team = widget.match.matchTeams[index];
                 final score = totalScores[index];
                 final teamRoundScores = roundScores[index];
                 return ListTile(
@@ -201,23 +253,42 @@ class _GamePageState extends State<GamePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Score: $score'),
-                      Text(teamRoundScores.map((score) => score == 0 ? 'X' : score.toString()).join(', '),),
-
+                      Text(teamRoundScores.map((score) => score == 0 ? 'X' : score.toString()).join(', ')),
                     ],
                   ),
                   trailing: Column(
-                    children: List.generate(team.length, (playerIndex) {
-                      final player = team[playerIndex];
-                      return Expanded(child: Text(player.name));
+                    children: List.generate(team.teamPlayers.length, (playerIndex) {
+                      final player = team.teamPlayers[playerIndex];
+                      return Expanded(child: Text(player.playerName));
                     }),
                   ),
                 );
               }),
+            ),
+            TextButton(
+              child: const Text('TEST'),
+              onPressed: () async {
+                _updateTeamScores(totalScores);
+
+                print('---------------------------');
+                print(widget.match.toString());
+                print('---------------------------');
+
+                await DatabaseHelper.updateMatch(widget.match);
+
+                final matchesFromDB = await DatabaseHelper.getMatches();
+
+                for (final match in matchesFromDB) {
+                    print('Match ID: ${match.matchId}');
+                    print('Match Teams: ${match.matchTeams}');
+                    print('Match Rounds: ${match.matchRounds}');
+                    print('---------------------------');
+                }
+              },
             ),
           ],
         ),
       ),
     );
   }
-
 }

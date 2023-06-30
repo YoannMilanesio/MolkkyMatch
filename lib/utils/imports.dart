@@ -16,8 +16,12 @@ export 'package:sqflite/sqflite.dart'; // SQLite
     export 'package:molkky_match/classes/database/database_helper.dart'; // Base de données
     // Match
     export 'package:molkky_match/classes/match/match_class.dart'; // Class des joueurs
-    // Players
-    export 'package:molkky_match/classes/players/player_class.dart'; // Class des joueurs
+    // Player
+    export 'package:molkky_match/classes/player/player_class.dart'; // Class des joueurs
+    // Round
+    export 'package:molkky_match/classes/round/round_class.dart'; // Class des joueurs
+    // Team
+    export 'package:molkky_match/classes/team/team_class.dart'; // Class des joueurs
 
 
   // -- Routes
